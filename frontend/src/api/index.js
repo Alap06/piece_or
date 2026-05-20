@@ -1,0 +1,41 @@
+import api from './axios';
+
+// ─── Auth ─────────────────────────────────────────────────
+export const authAPI = {
+  login: (data) => api.post('/auth/login', data),
+  register: (data) => api.post('/auth/register', data),
+  logout: () => api.post('/auth/logout'),
+  getMe: () => api.get('/auth/me'),
+  refresh: () => api.post('/auth/refresh'),
+};
+
+// ─── Pieces ───────────────────────────────────────────────
+export const piecesAPI = {
+  getAll: (params) => api.get('/pieces', { params }),
+  getById: (id) => api.get(`/pieces/${id}`),
+  create: (data) => api.post('/pieces', data),
+  update: (id, data) => api.put(`/pieces/${id}`, data),
+  delete: (id) => api.delete(`/pieces/${id}`),
+  togglePublish: (id) => api.patch(`/pieces/${id}/publish`),
+  reorder: (items) => api.put('/pieces/reorder', { items }),
+  uploadImages: (id, formData) =>
+    api.post(`/pieces/${id}/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  deleteImage: (id, imageId) => api.delete(`/pieces/${id}/images/${imageId}`),
+  getStats: () => api.get('/pieces/stats'),
+};
+
+// ─── Messages ─────────────────────────────────────────────
+export const messagesAPI = {
+  send: (data) => api.post('/contact', data),
+  getAll: (params) => api.get('/messages', { params }),
+  markRead: (id) => api.patch(`/messages/${id}/read`),
+  delete: (id) => api.delete(`/messages/${id}`),
+};
+
+// ─── Settings ─────────────────────────────────────────────
+export const settingsAPI = {
+  getAll: () => api.get('/settings'),
+  update: (key, value) => api.put(`/settings/${key}`, { value }),
+};
