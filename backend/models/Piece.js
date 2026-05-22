@@ -13,6 +13,11 @@ const PieceSchema = new mongoose.Schema(
     period: i18nField,
     description: i18nField,
     symbol: i18nField,
+    category: {
+      type: String,
+      enum: ['bijoux-tempe', 'colliers', 'bracelets', 'anneaux-cheville', 'autre'],
+      default: 'autre',
+    },
     material: { type: String, default: '' },
     color: { type: String, default: '' },
     images: [
@@ -24,43 +29,43 @@ const PieceSchema = new mongoose.Schema(
       },
     ],
     thumbnailUrl: { type: String, default: '' },
-    files: {
-      historical: [
+    technicalImage: {
+      url: String,
+      publicId: String,
+    },
+    historicalData: [
+      {
+        label: i18nField,
+        value: i18nField,
+        order: { type: Number, default: 0 },
+      },
+    ],
+    technicalData: [
+      {
+        label: i18nField,
+        value: i18nField,
+        order: { type: Number, default: 0 },
+      },
+    ],
+    symbolicData: {
+      greimas: [
         {
-          url: String,
-          publicId: String,
-          name: String,
-          size: Number,
+          level: { type: String, enum: ['plastique', 'figuratif', 'symbolique'] },
+          element: i18nField,
+          signification: i18nField,
         },
       ],
-      technical: [
+      visualSymbols: [
         {
-          url: String,
-          publicId: String,
-          name: String,
-          size: Number,
-        },
-      ],
-      symbolic: [
-        {
-          url: String,
-          publicId: String,
-          name: String,
-          size: Number,
+          image: {
+            url: String,
+            publicId: String,
+          },
+          name: i18nField,
+          signification: i18nField,
         },
       ],
     },
-    subPieces: [
-      {
-        name: i18nField,
-        description: i18nField,
-        material: { type: String, default: '' },
-        image: {
-          url: String,
-          publicId: String,
-        }
-      }
-    ],
     isPublished: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
     slug: { type: String, unique: true, sparse: true },

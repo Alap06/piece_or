@@ -39,3 +39,25 @@ export const settingsAPI = {
   getAll: () => api.get('/settings'),
   update: (key, value) => api.put(`/settings/${key}`, { value }),
 };
+
+// ─── Legends ──────────────────────────────────────────────
+export const legendsAPI = {
+  getAll: (params) => api.get('/legends', { params }),
+  getByPiece: (pieceId) => api.get(`/legends/piece/${pieceId}`),
+  getBySlug: (slug) => api.get(`/legends/${slug}`),
+  create: (data) => api.post('/legends', data),
+  update: (id, data) => api.put(`/legends/${id}`, data),
+  delete: (id) => api.delete(`/legends/${id}`),
+};
+
+// ─── Admin ────────────────────────────────────────────────
+export const adminAPI = {
+  getStats: () => api.get('/admin/stats'),
+  getMedia: () => api.get('/admin/media'),
+  deleteMedia: (publicId, data) => api.delete(`/admin/media/${publicId}`, { data }),
+  getUsers: () => api.get('/admin/users'),
+  createUser: (data) => api.post('/admin/users', data),
+  updateUserRole: (id, role) => api.put(`/admin/users/${id}/role`, { role }),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  resetPassword: (id) => api.post(`/admin/users/${id}/reset-password`),
+};

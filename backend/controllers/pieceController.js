@@ -89,6 +89,18 @@ const deletePiece = async (req, res, next) => {
         await cloudinary.uploader.destroy(img.publicId).catch(() => {});
       }
     }
+    
+    if (piece.technicalImage && piece.technicalImage.publicId) {
+      await cloudinary.uploader.destroy(piece.technicalImage.publicId).catch(() => {});
+    }
+    
+    if (piece.symbolicData && piece.symbolicData.visualSymbols) {
+      for (const sym of piece.symbolicData.visualSymbols) {
+        if (sym.image && sym.image.publicId) {
+           await cloudinary.uploader.destroy(sym.image.publicId).catch(() => {});
+        }
+      }
+    }
 
     await piece.deleteOne();
     res.json({ message: 'Pièce supprimée avec succès' });

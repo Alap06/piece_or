@@ -1,204 +1,601 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { piecesAPI } from '../api';
-import { useLanguage } from '../contexts/LanguageContext';
-import Loader from '../components/Loader';
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 
-// Swiper for gallery
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, EffectFade } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-fade';
+import { motion } from "framer-motion";
 
-// Image zoom
-import Zoom from 'react-medium-image-zoom';
-import 'react-medium-image-zoom/dist/styles.css';
+import {
+  FiArrowLeft,
+  FiArrowRight,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
+
+import { useLanguage } from "../contexts/LanguageContext";
+
+import { piecesAPI, legendsAPI } from "../api";
+
+import Loader from "../components/Loader";
 
 const PieceDetailPage = () => {
+
   const { id } = useParams();
-  const { t } = useTranslation();
+
   const { lang, dir } = useLanguage();
+
   const [piece, setPiece] = useState(null);
+
+  const [legends, setLegends] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('historical');
+
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
+
     const fetchPiece = async () => {
+
       try {
-        const { data } = await piecesAPI.getById(id);
-        setPiece(data.piece);
+
+        const [pieceRes, legendsRes] = await Promise.all([
+          piecesAPI.getById(id),
+          legendsAPI.getByPiece(id).catch(() => ({ data: { legends: [] } }))
+        ]);
+
+        setPiece(pieceRes.data.piece);
+        setLegends(legendsRes.data.legends || []);
+
       } catch (error) {
+
         console.error(error);
+
       } finally {
+
         setLoading(false);
+
       }
+
     };
+
     fetchPiece();
+
     window.scrollTo(0, 0);
+
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-dark pt-32"><Loader /></div>;
-  if (!piece) return <div className="min-h-screen bg-dark text-center pt-32 text-ivory">Pièce introuvable</div>;
+  if (loading) {
 
-  const images = piece.images?.length > 0 ? piece.images : [{ url: piece.thumbnailUrl || '/logo.png' }];
+    return (
+
+      <div className="min-h-screen bg-black pt-32">
+
+        <Loader />
+
+      </div>
+
+    );
+
+  }
+
+  if (!piece) {
+
+    return (
+
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+
+        Pièce introuvable
+
+      </div>
+
+    );
+
+  }
+
+  const images =
+    piece.images?.length > 0
+      ? piece.images
+      : [{ url: piece.thumbnailUrl || "/logo.png" }];
+
+  const nextImage = () => {
+
+    setSelectedImage((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    );
+
+  };
+
+  const prevImage = () => {
+
+    setSelectedImage((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1
+    );
+
+  };
+
+  const historicalData =
+    piece.historicalData?.length > 0
+      ? piece.historicalData
+      : [
+
+          {
+            label: "Nom du bijou",
+            value: "Mnégech Wejh",
+          },
+
+          {
+            label: "Origine du nom",
+            value:
+              "Arabe tunisien : Mnégech = gravé/décoré ; Wejh = visage/front",
+          },
+
+          {
+            label: "Traduction littérale",
+            value: "Bijou décoré du front",
+          },
+
+          {
+            label: "Fonction principale",
+            value:
+              "Bijou porté sur le front lors des cérémonies et mariages",
+          },
+
+          {
+            label: "Région d’origine",
+            value: "Mahdia, Tunisie",
+          },
+
+          {
+            label: "Époque d’apparition",
+            value:
+              "Ancienne tradition artisanale tunisienne",
+          },
+
+          {
+            label: "Matériaux utilisés",
+            value:
+              "Or, argent, perles et pierres semi-précieuses",
+          },
+
+          {
+            label: "Structure",
+            value:
+              "Chaînes métalliques gravées et ornements suspendus",
+          },
+
+          {
+            label: "Utilisation traditionnelle",
+            value:
+              "Porté par les femmes lors des mariages et célébrations",
+          },
+
+          {
+            label: "Signification symbolique",
+            value:
+              "Symbole de féminité, noblesse et élégance",
+          },
+
+          {
+            label: "Porté par",
+            value:
+              "Femmes lors des cérémonies traditionnelles",
+          },
+
+          {
+            label: "Rôle culturel",
+            value:
+              "Élément fort du patrimoine culturel de Mahdia",
+          },
+
+          {
+            label: "Évolution moderne",
+            value:
+              "Réinterprété dans les collections contemporaines",
+          },
+
+          {
+            label: "Statut actuel",
+            value:
+              "Bijou patrimonial encore valorisé dans les cérémonies",
+          },
+
+        ];
+
+  const legendsToDisplay =
+    legends?.length > 0
+      ? legends.map((leg, i) => ({
+          number: (i + 1).toString().padStart(2, "0"),
+          title: leg.name?.[lang] || leg.name?.fr || "Légende",
+          description: leg.shortDescription?.[lang] || leg.shortDescription?.fr || "",
+          slug: leg.slug,
+        }))
+      : [];
 
   return (
-    <div className="bg-dark min-h-screen pb-20">
-      
-      {/* Top Bar Navigation */}
-      <div className="border-b border-gold-dim">
+
+    <main className="min-h-screen bg-black text-white overflow-hidden">
+
+      {/* BACKGROUND */}
+
+      <div className="fixed inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(circle_at_center,#D4AF37_0%,transparent_70%)]" />
+
+      {/* TOP BAR */}
+
+      <div className="border-b border-[#D4AF37]/10 bg-black/90 backdrop-blur-xl sticky top-0 z-50">
+
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <Link to="/pieces" className="inline-flex items-center gap-3 text-muted hover:text-gold transition group">
-            {dir === 'rtl' ? <FiArrowRight className="group-hover:-translate-x-1 transition" /> : <FiArrowLeft className="group-hover:-translate-x-1 transition" />}
-            <span className="uppercase tracking-[2px] text-xs font-semibold">{t('piece_detail.back')}</span>
+
+          <Link
+            to="/pieces"
+            className="inline-flex items-center gap-3 text-[#d7d2c7] hover:text-[#D4AF37] transition group"
+          >
+
+            {dir === "rtl" ? (
+
+              <FiArrowRight className="group-hover:-translate-x-1 transition" />
+
+            ) : (
+
+              <FiArrowLeft className="group-hover:-translate-x-1 transition" />
+
+            )}
+
+            <span className="uppercase tracking-[3px] text-xs">
+
+              Retour
+
+            </span>
+
           </Link>
+
         </div>
+
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pt-12 grid grid-cols-1 lg:grid-cols-2 gap-16">
-        
-        {/* Left: Gallery */}
-        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="relative">
-          <div className="card-premium p-2 bg-[#050a10]">
-            <Swiper
-              modules={[Navigation, Pagination, EffectFade]}
-              effect="fade"
-              navigation
-              pagination={{ clickable: true }}
-              className="rounded-[20px] overflow-hidden aspect-[4/5] w-full"
-            >
-              {images.map((img, idx) => (
-                <SwiperSlide key={idx}>
-                  <Zoom zoomMargin={40}>
-                    <img
-                      src={img.url}
-                      alt={piece.name?.[lang] || 'Piece'}
-                      className="w-full h-full object-cover"
-                    />
-                  </Zoom>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+      {/* HERO */}
+
+      <section className="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-20 items-start">
+
+        {/* LEFT IMAGE */}
+
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+
+          {/* MAIN IMAGE */}
+
+          <div className="relative group mb-6">
+
+            <div className="absolute -inset-3 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-[40px] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700" />
+
+            <div className="relative rounded-[40px] overflow-hidden border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(0,0,0,0.7)]">
+
+              <img
+                src={images[selectedImage]?.url}
+                alt={piece.name?.[lang]}
+                className="w-full h-[700px] object-cover"
+              />
+
+              {/* LEFT ARROW */}
+
+              {images.length > 1 && (
+
+                <button
+                  onClick={prevImage}
+                  className="
+                    absolute
+                    left-5
+                    top-1/2
+                    -translate-y-1/2
+                    w-14
+                    h-14
+                    rounded-full
+                    bg-black/70
+                    backdrop-blur-xl
+                    border
+                    border-[#D4AF37]/30
+                    flex
+                    items-center
+                    justify-center
+                    text-white
+                    hover:bg-[#D4AF37]
+                    hover:text-black
+                    transition
+                    z-20
+                  "
+                >
+
+                  <FiChevronLeft size={28} />
+
+                </button>
+
+              )}
+
+              {/* RIGHT ARROW */}
+
+              {images.length > 1 && (
+
+                <button
+                  onClick={nextImage}
+                  className="
+                    absolute
+                    right-5
+                    top-1/2
+                    -translate-y-1/2
+                    w-14
+                    h-14
+                    rounded-full
+                    bg-black/70
+                    backdrop-blur-xl
+                    border
+                    border-[#D4AF37]/30
+                    flex
+                    items-center
+                    justify-center
+                    text-white
+                    hover:bg-[#D4AF37]
+                    hover:text-black
+                    transition
+                    z-20
+                  "
+                >
+
+                  <FiChevronRight size={28} />
+
+                </button>
+
+              )}
+
+            </div>
+
           </div>
+
+          {/* THUMBNAILS */}
+
+          {images.length > 1 && (
+
+            <div className="grid grid-cols-4 gap-4">
+
+              {images.map((img, index) => (
+
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    transition
+                    ${
+                      selectedImage === index
+                        ? "border-[#D4AF37]"
+                        : "border-[#D4AF37]/20"
+                    }
+                  `}
+                >
+
+                  <img
+                    src={img.url}
+                    alt="gallery"
+                    className="w-full h-28 object-cover hover:scale-105 transition duration-500"
+                  />
+
+                </button>
+
+              ))}
+
+            </div>
+
+          )}
+
         </motion.div>
 
-        {/* Right: Info */}
-        <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col justify-center">
-          
-          <h1 className="text-4xl md:text-5xl font-serif text-gold-light mb-4 leading-tight">
-            {piece.name?.[lang] || piece.name?.fr}
-          </h1>
-          
-          <p className="text-xl text-muted font-serif italic mb-10">
-            {piece.period?.[lang] || piece.period?.fr}
+        {/* RIGHT CONTENT */}
+
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+
+          <p className="uppercase tracking-[0.5em] text-[#D4AF37] text-sm mb-6">
+
+            {piece.period?.[lang] ||
+              piece.period?.fr ||
+              "Bijou traditionnel"}
+
           </p>
 
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 gap-6 mb-12 py-8 border-y border-gold-dim/50">
-            <div>
-              <p className="text-muted text-xs uppercase tracking-[2px] mb-2">{t('piece_detail.origin')}</p>
-              <p className="text-ivory font-medium">{piece.origin?.[lang] || piece.origin?.fr || '—'}</p>
-            </div>
-            <div>
-              <p className="text-muted text-xs uppercase tracking-[2px] mb-2">{t('piece_detail.material')}</p>
-              <p className="text-ivory font-medium">{piece.material || '—'}</p>
-            </div>
-          </div>
+          <h1 className="text-6xl md:text-7xl font-serif text-[#F5E6C8] mb-10 leading-none">
 
-          {/* Tabs */}
-          <div className="mb-8">
-            <div className="flex gap-8 border-b border-gold-dim">
-              {[
-                { id: 'historical', label: t('piece_detail.tab_historical') },
-                { id: 'technical', label: t('piece_detail.tab_technical') },
-                { id: 'symbolic', label: t('piece_detail.tab_symbolic') }
-              ].map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`pb-4 text-sm uppercase tracking-[2px] font-semibold transition relative ${
-                    activeTab === tab.id ? 'text-gold' : 'text-muted hover:text-ivory'
-                  }`}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-[2px] bg-gold" />
-                  )}
-                </button>
-              ))}
-            </div>
+            {piece.name?.[lang] || piece.name?.fr}
 
-            <div className="py-8 min-h-[150px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-beige leading-relaxed text-lg font-light"
-                >
-                  {activeTab === 'historical' && (piece.description?.[lang] || piece.description?.fr)}
-                  {activeTab === 'technical' && (piece.material ? `Fabriqué en ${piece.material}.` : 'Aucune donnée technique.')}
-                  {activeTab === 'symbolic' && (piece.symbol?.[lang] || piece.symbol?.fr || 'Aucune signification symbolique renseignée.')}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
+          </h1>
+
+          <div className="w-32 h-[1px] bg-[#D4AF37]/40 mb-10" />
+
+          <p className="text-[#d7d2c7] text-lg leading-[2] max-w-xl">
+
+            {piece.description?.[lang] ||
+              piece.description?.fr}
+
+          </p>
+
         </motion.div>
-      </div>
 
-      {/* Sub-Pieces Section */}
-      {piece.subPieces && piece.subPieces.length > 0 && (
-        <div className="max-w-7xl mx-auto px-6 mt-20">
-          <div className="border-t border-gold-dim pt-20 text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif text-gold-light mb-4">Anatomie de la Pièce</h2>
-            <p className="text-muted font-serif italic text-lg">Découvrez cette pièce dans ses moindres détails</p>
-          </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {piece.subPieces.map((sp, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-[#050a10] border border-gold-dim rounded-2xl overflow-hidden group hover:border-gold transition-colors duration-500"
-              >
-                {sp.image?.url && (
-                  <div className="h-64 overflow-hidden relative border-b border-gold-dim">
-                    <Zoom zoomMargin={40}>
-                      <img src={sp.image.url} alt={sp.name?.[lang]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    </Zoom>
-                  </div>
-                )}
-                <div className="p-8">
-                  <h3 className="text-2xl font-serif text-gold-light mb-3">{sp.name?.[lang] || sp.name?.fr}</h3>
-                  {sp.material && (
-                    <span className="inline-block px-3 py-1 bg-dark-2 border border-gold-dim text-muted text-xs uppercase tracking-wider rounded-full mb-4">
-                      {sp.material}
-                    </span>
-                  )}
-                  <p className="text-beige text-sm leading-relaxed">
-                    {sp.description?.[lang] || sp.description?.fr}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      {/* HISTORICAL SHEET */}
+
+      <section className="max-w-7xl mx-auto px-6 pb-32">
+
+        <div className="text-center mb-20">
+
+          <p className="uppercase tracking-[0.4em] text-[#D4AF37] text-sm mb-5">
+
+            Archive Patrimoniale
+
+          </p>
+
+          <h2 className="text-5xl font-serif text-[#F5E6C8]">
+
+            Fiche Historique
+
+          </h2>
+
+          <div className="w-32 h-[1px] bg-[#D4AF37] mx-auto mt-8" />
+
         </div>
-      )}
-    </div>
-  );
-};
 
-// Extracted from framer-motion imports above
-import { AnimatePresence } from 'framer-motion';
+        <div className="grid md:grid-cols-2 gap-8">
+
+          {historicalData.map((item, index) => (
+
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="
+                rounded-[32px]
+                border
+                border-[#D4AF37]/15
+                bg-white/[0.03]
+                backdrop-blur-2xl
+                p-10
+                hover:border-[#D4AF37]/40
+                transition
+              "
+            >
+
+              <h3 className="text-[#D4AF37] text-2xl font-serif mb-5">
+
+                {typeof item.label === 'object' ? (item.label?.[lang] || item.label?.fr) : item.label}
+
+              </h3>
+
+              <div className="w-16 h-[1px] bg-[#D4AF37]/30 mb-6" />
+
+              <p className="text-[#E8E0D0] leading-[2] text-[15px]">
+
+                {typeof item.value === 'object' ? (item.value?.[lang] || item.value?.fr) : item.value}
+
+              </p>
+
+            </motion.div>
+
+          ))}
+
+        </div>
+
+      </section>
+
+      {/* TECHNICAL IMAGE */}
+
+      <section className="max-w-7xl mx-auto px-6 pb-36">
+
+        <div className="text-center mb-20">
+
+          <p className="uppercase tracking-[0.4em] text-[#D4AF37] text-sm mb-5">
+
+            Technical Illustration
+
+          </p>
+
+          <h2 className="text-5xl font-serif text-[#F5E6C8] mb-8">
+
+            Fiche Technique
+
+          </h2>
+
+          <div className="w-32 h-[1px] bg-[#D4AF37] mx-auto" />
+
+        </div>
+
+        <div className="relative rounded-[40px] overflow-hidden border border-[#D4AF37]/20 bg-[#111] p-5 shadow-[0_0_60px_rgba(0,0,0,0.7)]">
+
+          <img
+            src={piece.technicalImage || images[0]?.url}
+            alt="Technique"
+            className="w-full rounded-[30px]"
+          />
+
+        </div>
+
+      </section>
+
+      {/* INTERACTIVE LEGEND */}
+
+      <section className="max-w-7xl mx-auto px-6 pb-36">
+
+        <div className="text-center mb-20">
+
+          <p className="uppercase tracking-[0.4em] text-[#D4AF37] text-sm mb-5">
+
+            Interactive Anatomy
+
+          </p>
+
+          <h2 className="text-5xl font-serif text-[#F5E6C8]">
+
+            Légende Interactive
+
+          </h2>
+
+          <div className="w-32 h-[1px] bg-[#D4AF37] mx-auto mt-8" />
+
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          {legendsToDisplay.map((legend, index) => (
+
+            <Link
+              to={`/legend/${legend.slug}`}
+              key={index}
+              className="
+                rounded-[30px]
+                border
+                border-[#D4AF37]/15
+                bg-white/[0.03]
+                p-8
+                hover:border-[#D4AF37]/40
+                hover:bg-[#D4AF37]/5
+                transition
+                block
+              "
+            >
+
+              <div className="w-14 h-14 rounded-full border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] mb-6">
+
+                {legend.number}
+
+              </div>
+
+              <h3 className="text-2xl font-serif text-[#F5E6C8] mb-4">
+
+                {legend.title}
+
+              </h3>
+
+              <p className="text-[#d7d2c7] leading-[1.9]">
+
+                {legend.description}
+
+              </p>
+
+            </Link>
+
+          ))}
+
+        </div>
+
+      </section>
+
+    </main>
+
+  );
+
+};
 
 export default PieceDetailPage;

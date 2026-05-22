@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { useTranslation } from 'react-i18next';
-import { FiHome, FiSettings, FiMail, FiGrid, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiSettings, FiMail, FiGrid, FiLogOut, FiStar, FiImage, FiUsers } from 'react-icons/fi';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminLayout = () => {
@@ -16,10 +16,13 @@ const AdminLayout = () => {
   }
 
   const menu = [
-    { path: '/admin', icon: <FiGrid />, label: t('admin.dashboard') },
-    { path: '/admin/pieces', icon: <FiHome />, label: t('admin.pieces') },
-    { path: '/admin/messages', icon: <FiMail />, label: t('admin.messages') },
-    { path: '/admin/settings', icon: <FiSettings />, label: t('admin.settings') },
+    { path: '/admin', icon: <FiGrid />, label: t('admin.dashboard') || 'Tableau de bord' },
+    { path: '/admin/pieces', icon: <FiHome />, label: t('admin.pieces') || 'Pièces' },
+    { path: '/admin/legends', icon: <FiStar />, label: 'Légendes' },
+    { path: '/admin/media', icon: <FiImage />, label: 'Médiathèque' },
+    { path: '/admin/users', icon: <FiUsers />, label: 'Utilisateurs' },
+    { path: '/admin/messages', icon: <FiMail />, label: t('admin.messages') || 'Messages' },
+    { path: '/admin/settings', icon: <FiSettings />, label: t('admin.settings') || 'Paramètres' },
   ];
 
   const handleLogout = async () => {

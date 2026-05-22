@@ -22,6 +22,12 @@ import PiecesAdmin from './pages/admin/PiecesAdmin';
 import PieceFormPage from './pages/admin/PieceFormPage';
 import MessagesAdmin from './pages/admin/MessagesAdmin';
 import SettingsAdmin from './pages/admin/SettingsAdmin';
+import LegendsAdmin from './pages/admin/LegendsAdmin';
+import LegendFormPage from './pages/admin/LegendFormPage';
+import MediaAdmin from './pages/admin/MediaAdmin';
+import UsersAdmin from './pages/admin/UsersAdmin';
+import LegendDetailPage from "./pages/LegendDetailPage";
+
 
 function App() {
   const { checkAuth } = useAuthStore();
@@ -43,6 +49,8 @@ function App() {
           <Route path="/pieces" element={<PiecesPage />} />
           <Route path="/pieces/:id" element={<PieceDetailPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/legend/:slug" element={<LegendDetailPage />} />
+
         </Route>
 
         {/* Admin routes */}
@@ -51,6 +59,11 @@ function App() {
           <Route path="pieces" element={<PiecesAdmin />} />
           <Route path="pieces/new" element={<PieceFormPage />} />
           <Route path="pieces/:id/edit" element={<PieceFormPage />} />
+          <Route path="legends" element={<LegendsAdmin />} />
+          <Route path="legends/new" element={<LegendFormPage />} />
+          <Route path="legends/:id/edit" element={<LegendFormPage />} />
+          <Route path="media" element={<MediaAdmin />} />
+          <Route path="users" element={<UsersAdmin />} />
           <Route path="messages" element={<MessagesAdmin />} />
           <Route path="settings" element={<SettingsAdmin />} />
         </Route>

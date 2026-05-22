@@ -60,9 +60,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ─── Routes ───────────────────────────────────────────────
 app.use('/api/auth', authLimiter, require('./routes/authRoutes'));
 app.use('/api/pieces', apiLimiter, require('./routes/pieceRoutes'));
+app.use('/api/legends', apiLimiter, require('./routes/legendRoutes'));
 app.use('/api/contact', apiLimiter, require('./routes/messageRoutes'));
 app.use('/api/messages', apiLimiter, require('./routes/messageRoutes'));
 app.use('/api/settings', apiLimiter, require('./routes/settingRoutes'));
+app.use('/api/admin', apiLimiter, require('./routes/adminRoutes'));
 
 // ─── Health check ─────────────────────────────────────────
 app.get('/api/health', (req, res) => {
