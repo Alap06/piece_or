@@ -14,7 +14,7 @@ const MessagesAdmin = () => {
   const fetchMessages = async () => {
     try {
       const { data } = await messagesAPI.getAll({ limit: 50 });
-      setMessages(data.messages);
+      setMessages(Array.isArray(data?.messages) ? data.messages : []);
     } catch (error) {
       toast.error(t('common.error'));
     } finally {

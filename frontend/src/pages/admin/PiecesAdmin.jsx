@@ -19,7 +19,7 @@ const PiecesAdmin = () => {
   const fetchPieces = async () => {
     try {
       const { data } = await piecesAPI.getAll({ limit: 100 });
-      setPieces(data.pieces);
+      setPieces(Array.isArray(data?.pieces) ? data.pieces : []);
     } catch (error) {
       toast.error(t('common.error') || 'Erreur');
     } finally {
@@ -81,7 +81,7 @@ const PiecesAdmin = () => {
 
       {/* FILTERS */}
       <div className="bg-dark-2 border border-gold-dim rounded-2xl p-4 mb-6 flex flex-wrap gap-4 items-center">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-50">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="text"
@@ -118,7 +118,7 @@ const PiecesAdmin = () => {
 
       <div className="bg-dark-2 border border-gold-dim rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[800px]">
+          <table className="w-full text-left border-collapse min-w-200">
             <thead>
               <tr className="bg-black/50 border-b border-gold-dim">
                 <th className="p-4 font-medium text-muted text-sm uppercase">Miniature</th>

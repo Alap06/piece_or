@@ -30,7 +30,7 @@ const LegendFormPage = () => {
     const init = async () => {
       try {
         const piecesRes = await piecesAPI.getAll({ limit: 200 });
-        setPieces(piecesRes.data.pieces);
+        setPieces(Array.isArray(piecesRes?.data?.pieces) ? piecesRes.data.pieces : []);
 
         if (isEdit) {
           // We use getBySlug only if we have a slug, but for edit by ID we need the slug or another approach

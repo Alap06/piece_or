@@ -15,7 +15,7 @@ const HomePage = () => {
     const fetchFeatured = async () => {
       try {
         const { data } = await piecesAPI.getAll({ limit: 3, published: true });
-        setFeatured(data.pieces);
+        setFeatured(Array.isArray(data?.pieces) ? data.pieces : []);
       } catch (error) {
         console.error(error);
       } finally {
@@ -30,7 +30,7 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
         {/* Background ambient light */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gold/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-200 max-h-200 bg-gold/10 blur-[150px] rounded-full pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -61,7 +61,7 @@ const HomePage = () => {
 
       {/* Intro Section */}
       <section className="py-24 px-6 bg-dark-2 relative">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold-dim to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-gold-dim to-transparent" />
         <div className="max-w-4xl mx-auto text-center">
           <motion.p 
             initial={{ opacity: 0 }}

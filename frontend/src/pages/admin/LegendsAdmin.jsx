@@ -19,8 +19,8 @@ const LegendsAdmin = () => {
           legendsAPI.getAll(),
           piecesAPI.getAll({ limit: 200 }),
         ]);
-        setLegends(legsRes.data.legends);
-        setPieces(piecesRes.data.pieces);
+        setLegends(Array.isArray(legsRes?.data?.legends) ? legsRes.data.legends : []);
+        setPieces(Array.isArray(piecesRes?.data?.pieces) ? piecesRes.data.pieces : []);
       } catch {
         toast.error('Erreur de chargement');
       } finally {

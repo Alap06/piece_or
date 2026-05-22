@@ -35,7 +35,7 @@ const UsersAdmin = () => {
   const fetchUsers = async () => {
     try {
       const { data } = await adminAPI.getUsers();
-      setUsers(data.users);
+      setUsers(Array.isArray(data?.users) ? data.users : []);
     } catch {
       toast.error('Erreur de chargement des utilisateurs');
     } finally {
@@ -114,7 +114,7 @@ const UsersAdmin = () => {
       {/* Users Table */}
       <div className="bg-dark-2 border border-gold-dim rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+          <table className="w-full text-left border-collapse min-w-175">
             <thead>
               <tr className="bg-black/50 border-b border-gold-dim">
                 <th className="p-4 font-medium text-muted text-sm uppercase">Utilisateur</th>

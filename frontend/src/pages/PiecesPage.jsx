@@ -19,8 +19,8 @@ const PiecesPage = () => {
     setLoading(true);
     try {
       const { data } = await piecesAPI.getAll({ page, limit: 12, search, published: true });
-      setPieces(data.pieces);
-      setTotalPages(data.pagination.pages);
+      setPieces(Array.isArray(data?.pieces) ? data.pieces : []);
+      setTotalPages(Number(data?.pagination?.pages) || 1);
     } catch (error) {
       console.error(error);
     } finally {
