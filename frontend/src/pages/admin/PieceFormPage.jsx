@@ -26,6 +26,8 @@ const PieceFormPage = () => {
     color: '',
     order: 0,
     isPublished: false,
+    technicalImage: { url: '', publicId: '' },
+    historicalData: [],
     subPieces: []
   });
 
@@ -48,6 +50,8 @@ const PieceFormPage = () => {
             color: p.color || '',
             order: p.order || 0,
             isPublished: p.isPublished || false,
+            technicalImage: p.technicalImage || { url: '', publicId: '' },
+            historicalData: p.historicalData || [],
             subPieces: p.subPieces || []
           });
           setImages(p.images || []);
@@ -91,6 +95,63 @@ const PieceFormPage = () => {
         }
       ]
     });
+  };
+
+  const handleHistoricalDataChange = (index, field, lang, value) => {
+    const newHistoricalData = [...formData.historicalData];
+    const current = newHistoricalData[index] || {
+      label: { fr: '', en: '', ar: '' },
+      value: { fr: '', en: '', ar: '' },
+      order: index,
+    };
+
+    if (field === 'label' || field === 'value') {
+      current[field] = { ...current[field], [lang]: value };
+    } else {
+      current[field] = value;
+    }
+
+    newHistoricalData[index] = current;
+    setFormData({ ...formData, historicalData: newHistoricalData });
+  };
+
+  const addHistoricalData = () => {
+    setFormData({
+      ...formData,
+      historicalData: [
+        ...formData.historicalData,
+        {
+          label: { fr: '', en: '', ar: '' },
+          value: { fr: '', en: '', ar: '' },
+          order: formData.historicalData.length,
+        },
+      ],
+    });
+  };
+
+  const removeHistoricalData = (index) => {
+    const newHistoricalData = [...formData.historicalData];
+    newHistoricalData.splice(index, 1);
+    setFormData({ ...formData, historicalData: newHistoricalData });
+  };
+
+  const handleTechnicalImageUpload = async (file) => {
+    if (!file) return;
+    const toastId = toast.loading('Uploading technical image...');
+    try {
+      const dataForm = new FormData();
+      dataForm.append('image', file);
+      const { data } = await api.post('/pieces/upload-single', dataForm, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData(prev => ({
+        ...prev,
+        technicalImage: { url: data.url, publicId: data.publicId }
+      }));
+      toast.success('Fiche technique ajoutée', { id: toastId });
+    } catch (error) {
+      toast.error('Erreur upload', { id: toastId });
+    }
   };
 
   const removeSubPiece = (index) => {
@@ -281,6 +342,95 @@ const PieceFormPage = () => {
           <div className="mt-6 flex items-center gap-3">
             <input type="checkbox" checked={formData.isPublished} onChange={e => setFormData({...formData, isPublished: e.target.checked})} className="w-5 h-5 accent-gold" />
             <label className="text-sm uppercase tracking-[1px] text-ivory">Publié</label>
+          </div>
+        </div>
+
+        {/* Historical sheet / analysis */}
+        <div className="bg-dark-2 border border-gold-dim rounded-2xl p-6 mt-8">
+          <div className="flex justify-between items-center border-b border-gold-dim pb-2 mb-6">
+            <h2 className="text-xl text-gold-light font-serif">Fiche historique / analyse</h2>
+            <button onClick={addHistoricalData} className="btn-outline-gold px-3 py-1 flex items-center gap-2 text-sm rounded">
+              <FiPlus /> Ajouter un champ
+            </button>
+          </div>
+
+          {formData.historicalData.length === 0 ? (
+            <p className="text-muted text-center py-6">Aucun champ d&apos;analyse. Ajoutez une ligne pour documenter la pièce.</p>
+          ) : (
+            <div className="space-y-6">
+              {formData.historicalData.map((item, index) => (
+                <div key={index} className="bg-dark border border-gold-dim/50 rounded-xl p-6 relative">
+                  <button onClick={() => removeHistoricalData(index)} className="absolute top-4 right-4 text-red-400 hover:text-red-500 transition p-2 bg-red-500/10 rounded">
+                    <FiTrash2 />
+                  </button>
+                  <h3 className="text-lg text-gold mb-4 font-serif">Champ #{index + 1}</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {['fr', 'en', 'ar'].map(l => (
+                      <div key={`hist-label-${index}-${l}`}>
+                        <label className="block text-xs uppercase text-muted mb-2">Libellé ({l.toUpperCase()})</label>
+                        <input
+                          value={item.label?.[l] || ''}
+                          onChange={(e) => handleHistoricalDataChange(index, 'label', l, e.target.value)}
+                          dir={l === 'ar' ? 'rtl' : 'ltr'}
+                          className="w-full bg-dark-2 border border-gold-dim rounded px-3 py-2 text-ivory outline-none focus:border-gold text-sm"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {['fr', 'en', 'ar'].map(l => (
+                      <div key={`hist-value-${index}-${l}`}>
+                        <label className="block text-xs uppercase text-muted mb-2">Valeur ({l.toUpperCase()})</label>
+                        <textarea
+                          value={item.value?.[l] || ''}
+                          onChange={(e) => handleHistoricalDataChange(index, 'value', l, e.target.value)}
+                          dir={l === 'ar' ? 'rtl' : 'ltr'}
+                          rows="3"
+                          className="w-full bg-dark-2 border border-gold-dim rounded px-3 py-2 text-ivory outline-none focus:border-gold text-sm"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="w-full md:w-48">
+                    <label className="block text-xs uppercase text-muted mb-2">Ordre</label>
+                    <input
+                      type="number"
+                      value={item.order || 0}
+                      onChange={(e) => handleHistoricalDataChange(index, 'order', null, Number(e.target.value))}
+                      className="w-full bg-dark-2 border border-gold-dim rounded px-3 py-2 text-ivory outline-none focus:border-gold text-sm"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Technical sheet image */}
+        <div className="bg-dark-2 border border-gold-dim rounded-2xl p-6 mt-8">
+          <h2 className="text-xl text-gold-light mb-6 border-b border-gold-dim pb-2 font-serif">Fiche technique</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div>
+              <label className="block text-xs uppercase text-muted mb-2">Image de la fiche technique</label>
+              <div className="flex items-center gap-4">
+                {formData.technicalImage?.url && (
+                  <img src={formData.technicalImage.url} alt="fiche technique" className="w-24 h-24 object-cover rounded border border-gold" />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleTechnicalImageUpload(e.target.files[0])}
+                  className="text-sm text-ivory flex-1"
+                />
+              </div>
+            </div>
+            <div className="text-muted text-sm leading-6">
+              <p>Cette image est affichée dans la page détail de la pièce comme illustration technique.</p>
+              <p className="mt-2">Si aucune image n&apos;est envoyée, le site utilisera automatiquement la première photo de la galerie.</p>
+            </div>
           </div>
         </div>
 

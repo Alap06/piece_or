@@ -47,6 +47,18 @@ const PieceSchema = new mongoose.Schema(
         order: { type: Number, default: 0 },
       },
     ],
+    subPieces: [
+      {
+        name: i18nField,
+        description: i18nField,
+        material: { type: String, default: '' },
+        image: {
+          url: { type: String, default: '' },
+          publicId: { type: String, default: '' },
+        },
+        order: { type: Number, default: 0 },
+      },
+    ],
     symbolicData: {
       greimas: [
         {

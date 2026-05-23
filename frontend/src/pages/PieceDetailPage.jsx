@@ -515,7 +515,7 @@ const PieceDetailPage = () => {
         <div className="relative rounded-[40px] overflow-hidden border border-[#D4AF37]/20 bg-[#111] p-5 shadow-[0_0_60px_rgba(0,0,0,0.7)]">
 
           <img
-            src={piece.technicalImage || images[0]?.url}
+            src={piece.technicalImage?.url || images[0]?.url}
             alt="Technique"
             className="w-full rounded-[30px]"
           />

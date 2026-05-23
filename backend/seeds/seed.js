@@ -23,6 +23,17 @@ const pieces = [
     color: '#D4AF37',
     isPublished: true,
     order: 1,
+    technicalImage: {
+      url: 'https://images.unsplash.com/photo-1601821765780-754fa98637c1?w=1200',
+      publicId: 'sample_piece1_technical',
+    },
+    historicalData: [
+      {
+        label: { fr: 'Origine', en: 'Origin', ar: 'الأصل' },
+        value: { fr: 'Mahdia, Tunisie', en: 'Mahdia, Tunisia', ar: 'المهدية، تونس' },
+        order: 1,
+      },
+    ],
     thumbnailUrl: 'https://images.unsplash.com/photo-1601821765780-754fa98637c1?w=800',
     images: [
       {
@@ -51,6 +62,17 @@ const pieces = [
     color: '#C9A84C',
     isPublished: true,
     order: 2,
+    technicalImage: {
+      url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1200',
+      publicId: 'sample_piece2_technical',
+    },
+    historicalData: [
+      {
+        label: { fr: 'Usage', en: 'Use', ar: 'الاستخدام' },
+        value: { fr: 'Bijou de cérémonie', en: 'Ceremonial jewel', ar: 'حلي احتفالي' },
+        order: 1,
+      },
+    ],
     thumbnailUrl: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800',
     images: [
       {
@@ -79,6 +101,17 @@ const pieces = [
     color: '#E8C97A',
     isPublished: true,
     order: 3,
+    technicalImage: {
+      url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200',
+      publicId: 'sample_piece3_technical',
+    },
+    historicalData: [
+      {
+        label: { fr: 'Composition', en: 'Composition', ar: 'التركيب' },
+        value: { fr: 'Or, pierres précieuses', en: 'Gold, gemstones', ar: 'ذهب، أحجار كريمة' },
+        order: 1,
+      },
+    ],
     thumbnailUrl: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800',
     images: [
       {
@@ -107,6 +140,17 @@ const pieces = [
     color: '#D4AF37',
     isPublished: true,
     order: 4,
+    technicalImage: {
+      url: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=1200',
+      publicId: 'sample_piece4_technical',
+    },
+    historicalData: [
+      {
+        label: { fr: 'Région', en: 'Region', ar: 'المنطقة' },
+        value: { fr: 'Mahdia, Tunisie', en: 'Mahdia, Tunisia', ar: 'المهدية، تونس' },
+        order: 1,
+      },
+    ],
     thumbnailUrl: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800',
     images: [
       {
@@ -135,6 +179,17 @@ const pieces = [
     color: '#E8C97A',
     isPublished: true,
     order: 5,
+    technicalImage: {
+      url: 'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=1200',
+      publicId: 'sample_piece5_technical',
+    },
+    historicalData: [
+      {
+        label: { fr: 'Fonction', en: 'Function', ar: 'الوظيفة' },
+        value: { fr: 'Bijou de mariage', en: 'Wedding jewel', ar: 'حلي زفاف' },
+        order: 1,
+      },
+    ],
     thumbnailUrl: 'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=800',
     images: [
       {
@@ -163,6 +218,17 @@ const pieces = [
     color: '#C9A84C',
     isPublished: true,
     order: 6,
+    technicalImage: {
+      url: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=1200',
+      publicId: 'sample_piece6_technical',
+    },
+    historicalData: [
+      {
+        label: { fr: 'Symbolique', en: 'Symbolism', ar: 'الرمزية' },
+        value: { fr: 'Protection et baraka', en: 'Protection and baraka', ar: 'الحماية والبركة' },
+        order: 1,
+      },
+    ],
     thumbnailUrl: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800',
     images: [
       {
