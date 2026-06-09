@@ -18,6 +18,8 @@ export const piecesAPI = {
   delete: (id) => api.delete(`/pieces/${id}`),
   togglePublish: (id) => api.patch(`/pieces/${id}/publish`),
   reorder: (items) => api.put('/pieces/reorder', { items }),
+  autoTranslate: (id) => api.post(`/pieces/${id}/auto-translate`),
+  autoTranslateAll: () => api.post('/pieces/auto-translate-all'),
   uploadImages: (id, formData) =>
     api.post(`/pieces/${id}/images`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },

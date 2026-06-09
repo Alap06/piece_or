@@ -1,14 +1,16 @@
 const Piece = require('../models/Piece');
 const cloudinary = require('../config/cloudinary');
+const { fillPieceTranslations } = require('../utils/translateI18n');
 
 // GET /api/pieces
 const getAllPieces = async (req, res, next) => {
   try {
-    const { page = 1, limit = 12, search = '', lang = 'fr', published } = req.query;
+    const { page = 1, limit = 12, search = '', lang = 'fr', published, category } = req.query;
     const skip = (page - 1) * limit;
 
     const query = {};
     if (published !== undefined) query.isPublished = published === 'true';
+    if (category) query.category = category;
     if (search) {
       query.$or = [
         { [`name.fr`]: { $regex: search, $options: 'i' } },
@@ -220,6 +222,56 @@ const getStats = async (req, res, next) => {
   }
 };
 
+// POST /api/pieces/auto-translate-all — Remplit EN/AR pour toutes les pièces
+const autoTranslateAllPieces = async (req, res, next) => {
+  try {
+    const pieces = await Piece.find({});
+    let count = 0;
+    for (const piece of pieces) {
+      const plain = piece.toObject();
+      const filled = await fillPieceTranslations(plain);
+      piece.name = filled.name;
+      piece.origin = filled.origin;
+      piece.period = filled.period;
+      piece.description = filled.description;
+      piece.symbol = filled.symbol;
+      piece.historicalData = filled.historicalData;
+      piece.technicalData = filled.technicalData;
+      piece.subPieces = filled.subPieces;
+      await piece.save();
+      count += 1;
+    }
+    res.json({ message: `${count} pièce(s) traduite(s)`, count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /api/pieces/:id/auto-translate — Remplit EN/AR depuis le français
+const autoTranslatePiece = async (req, res, next) => {
+  try {
+    const piece = await Piece.findById(req.params.id);
+    if (!piece) return res.status(404).json({ message: 'Pièce introuvable' });
+
+    const plain = piece.toObject();
+    const filled = await fillPieceTranslations(plain);
+
+    piece.name = filled.name;
+    piece.origin = filled.origin;
+    piece.period = filled.period;
+    piece.description = filled.description;
+    piece.symbol = filled.symbol;
+    piece.historicalData = filled.historicalData;
+    piece.technicalData = filled.technicalData;
+    piece.subPieces = filled.subPieces;
+
+    await piece.save();
+    res.json({ message: 'Traductions générées', piece });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // POST /api/pieces/upload-single — Generic image upload (for sub-pieces or rich text)
 const uploadSingleImage = async (req, res, next) => {
   try {
@@ -245,4 +297,6 @@ module.exports = {
   deletePieceImage,
   getStats,
   uploadSingleImage,
+  autoTranslatePiece,
+  autoTranslateAllPieces,
 };

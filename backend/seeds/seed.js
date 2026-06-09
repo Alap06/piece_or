@@ -21,6 +21,7 @@ const pieces = [
     },
     material: 'Or 18 carats, perles, émail',
     color: '#D4AF37',
+    category: 'bijoux-tempe',
     isPublished: true,
     order: 1,
     technicalImage: {
@@ -60,6 +61,7 @@ const pieces = [
     },
     material: 'Or 22 carats',
     color: '#C9A84C',
+    category: 'bijoux-tempe',
     isPublished: true,
     order: 2,
     technicalImage: {
@@ -99,6 +101,7 @@ const pieces = [
     },
     material: 'Or 18 carats, rubis, émeraudes',
     color: '#E8C97A',
+    category: 'colliers',
     isPublished: true,
     order: 3,
     technicalImage: {
@@ -138,6 +141,7 @@ const pieces = [
     },
     material: 'Or 18 carats, argent doré',
     color: '#D4AF37',
+    category: 'anneaux-cheville',
     isPublished: true,
     order: 4,
     technicalImage: {

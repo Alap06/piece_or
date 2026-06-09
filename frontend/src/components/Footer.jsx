@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { FiFacebook, FiInstagram, FiTwitter } from 'react-icons/fi';
+import SiteLogo from './SiteLogo';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ const Footer = () => {
         
         {/* Brand */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <img src="/logo.png" alt="Logo" className="w-20 mb-6 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" onError={(e) => e.target.src = '/logo.png'} />
+          <SiteLogo variant="footer" className="mb-6" />
           <h3 className="text-gold-light font-serif text-xl mb-2">{t('home.title')}</h3>
           <p className="text-muted text-sm max-w-xs">{t('home.tagline')}</p>
         </div>

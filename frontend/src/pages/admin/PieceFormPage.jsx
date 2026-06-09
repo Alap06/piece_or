@@ -5,7 +5,8 @@ import { piecesAPI } from '../../api';
 import toast, { Toaster } from 'react-hot-toast';
 import Loader from '../../components/Loader';
 import { FiPlus, FiTrash2, FiSave, FiX, FiImage } from 'react-icons/fi';
-import api from '../../api/axios'; // For the direct image upload if needed
+import api from '../../api/axios';
+import { PIECE_CATEGORIES } from '../../constants/pieceCategories';
 
 const PieceFormPage = () => {
   const { id } = useParams();
@@ -15,6 +16,7 @@ const PieceFormPage = () => {
   const isEdit = Boolean(id);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
+  const [translating, setTranslating] = useState(false);
 
   const [formData, setFormData] = useState({
     name: { fr: '', en: '', ar: '' },
@@ -24,6 +26,7 @@ const PieceFormPage = () => {
     symbol: { fr: '', en: '', ar: '' },
     material: '',
     color: '',
+    category: 'autre',
     order: 0,
     isPublished: false,
     technicalImage: { url: '', publicId: '' },
@@ -48,6 +51,7 @@ const PieceFormPage = () => {
             symbol: p.symbol || { fr: '', en: '', ar: '' },
             material: p.material || '',
             color: p.color || '',
+            category: p.category || 'autre',
             order: p.order || 0,
             isPublished: p.isPublished || false,
             technicalImage: p.technicalImage || { url: '', publicId: '' },
@@ -178,6 +182,33 @@ const PieceFormPage = () => {
     }
   };
 
+  const handleAutoTranslate = async () => {
+    if (!isEdit) {
+      toast.error('Enregistrez la pièce avant de générer les traductions');
+      return;
+    }
+    setTranslating(true);
+    const toastId = toast.loading('Traduction en cours (FR → EN, AR)...');
+    try {
+      const { data } = await piecesAPI.autoTranslate(id);
+      const p = data.piece;
+      setFormData((prev) => ({
+        ...prev,
+        name: p.name || prev.name,
+        origin: p.origin || prev.origin,
+        period: p.period || prev.period,
+        description: p.description || prev.description,
+        symbol: p.symbol || prev.symbol,
+        historicalData: p.historicalData || prev.historicalData,
+      }));
+      toast.success('Traductions EN et AR générées', { id: toastId });
+    } catch {
+      toast.error('Erreur de traduction', { id: toastId });
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -237,7 +268,17 @@ const PieceFormPage = () => {
         <h1 className="text-3xl font-serif text-ivory">
           {isEdit ? t('admin.edit_piece') : t('admin.new_piece')}
         </h1>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
+          {isEdit && (
+            <button
+              type="button"
+              onClick={handleAutoTranslate}
+              disabled={translating || saving}
+              className="btn-outline-gold px-4 py-2 disabled:opacity-50"
+            >
+              {translating ? 'Traduction…' : 'Traduire FR → EN / AR'}
+            </button>
+          )}
           <button onClick={() => navigate('/admin/pieces')} className="btn-outline-gold px-4 py-2 flex items-center gap-2">
             <FiX /> {t('common.cancel')}
           </button>
@@ -322,6 +363,22 @@ const PieceFormPage = () => {
                 />
               </div>
             ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-xs uppercase text-muted mb-2">Catégorie</label>
+              <select
+                value={formData.category || 'autre'}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full bg-dark border border-gold-dim rounded px-4 py-2 text-ivory outline-none focus:border-gold"
+              >
+                {PIECE_CATEGORIES.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{t(cat.labelKey)}</option>
+                ))}
+                <option value="autre">Autre</option>
+              </select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

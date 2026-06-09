@@ -3,6 +3,7 @@ import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { useTranslation } from 'react-i18next';
 import { FiHome, FiSettings, FiMail, FiGrid, FiLogOut, FiStar, FiImage, FiUsers } from 'react-icons/fi';
+import SiteLogo from '../components/SiteLogo';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminLayout = () => {
@@ -37,7 +38,7 @@ const AdminLayout = () => {
       <aside className={`w-64 bg-[#0a111a] border-${dir === 'rtl' ? 'l' : 'r'} border-gold-dim flex flex-col`}>
         <div className="p-6 border-b border-gold-dim flex items-center justify-center">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo" className="w-10 h-10" />
+            <SiteLogo variant="admin" />
             <span className="text-gold font-serif text-lg">Admin</span>
           </Link>
         </div>

@@ -12,7 +12,7 @@ const PieceCard = ({ piece }) => {
 
   return (
     <Link
-      to={`/pieces/${piece._id}`}
+      to={`/pieces/${piece._id}/historique`}
       className="group card-premium overflow-hidden flex flex-col relative"
     >
       <div className="relative h-[400px] overflow-hidden">

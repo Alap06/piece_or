@@ -9,7 +9,7 @@ import AdminLayout from './layouts/AdminLayout';
 // Public Pages
 import HomePage from './pages/HomePage';
 import PiecesPage from './pages/PiecesPage';
-import PieceDetailPage from './pages/PieceDetailPage';
+import PieceSectionPage from './pages/PieceSectionPage';
 import ContactPage from './pages/ContactPage';
 
 // Auth Pages
@@ -47,7 +47,8 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/pieces" element={<PiecesPage />} />
-          <Route path="/pieces/:id" element={<PieceDetailPage />} />
+          <Route path="/pieces/:id" element={<Navigate to="historique" replace />} />
+          <Route path="/pieces/:id/:section" element={<PieceSectionPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/legend/:slug" element={<LegendDetailPage />} />
 

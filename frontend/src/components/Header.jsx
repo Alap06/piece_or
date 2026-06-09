@@ -5,6 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import useAuthStore from '../store/authStore';
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import SiteLogo from './SiteLogo';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -39,12 +40,7 @@ const Header = () => {
         
         {/* Logo */}
         <Link to="/" className="flex items-center gap-4 group z-50">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="w-16 h-16 object-contain drop-shadow-[0_0_15px_rgba(212,175,55,0.35)] group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => { e.target.src = '/logo.png'; }}
-          />
+          <SiteLogo variant="header" />
           <div className="hidden sm:block">
             <h1 className="text-gold-light text-2xl font-serif leading-none tracking-wide group-hover:text-gold transition-colors">
               {t('home.title')}

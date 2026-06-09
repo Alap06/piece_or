@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import useAuthStore from '../../store/authStore';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import SiteLogo from '../../components/SiteLogo';
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -33,7 +34,7 @@ const LoginPage = () => {
         className="card-premium w-full max-w-md p-10 bg-[#070b12] relative z-10"
       >
         <div className="text-center mb-10">
-          <img src="/logo.png" alt="Logo" className="w-16 mx-auto mb-4" />
+          <SiteLogo variant="auth" />
           <h1 className="text-3xl font-serif text-gold-light">{t('auth.login_title')}</h1>
         </div>
 

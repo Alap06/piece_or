@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { piecesAPI } from '../api';
 import PieceCard from '../components/PieceCard';
 import Loader from '../components/Loader';
+import SiteLogo from '../components/SiteLogo';
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -29,8 +30,6 @@ const HomePage = () => {
     <div className="bg-dark">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
-        {/* Background ambient light */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-200 max-h-200 bg-gold/10 blur-[150px] rounded-full pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -38,12 +37,7 @@ const HomePage = () => {
           transition={{ duration: 1 }}
           className="z-10 flex flex-col items-center"
         >
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="w-48 md:w-64 h-auto object-contain mb-8 drop-shadow-[0_0_25px_rgba(212,175,55,0.6)] animate-float"
-            onError={(e) => e.target.src = '/logo.png'}
-          />
+          <SiteLogo variant="hero" />
 
           <h1 className="text-5xl md:text-7xl font-serif text-gold-light mb-6 tracking-wide drop-shadow-lg">
             {t('home.title')}
